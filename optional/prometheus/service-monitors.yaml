@@ -1,0 +1,57 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: front
+  labels:
+    app: front
+spec:
+  selector:
+    matchLabels:
+      app: front
+  endpoints:
+  - port: web
+    interval: 10s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: pusher
+  labels:
+    app: pusher
+spec:
+  selector:
+    matchLabels:
+      app: pusher
+  endpoints:
+  - port: web
+    interval: 10s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: back
+  labels:
+    app: back
+spec:
+  selector:
+    matchLabels:
+      app: back
+  endpoints:
+  - port: web1
+    interval: 10s
+  - port: web2
+    interval: 10s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: uploader
+  labels:
+    app: uploader
+spec:
+  selector:
+    matchLabels:
+      app: uploader
+  endpoints:
+  - port: web
+    interval: 10s

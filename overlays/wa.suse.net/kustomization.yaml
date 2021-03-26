@@ -10,6 +10,7 @@ secretGenerator:
 resources:
 - back-services.yaml
 - ../../base
+- ../../optional/prometheus
 
 patchesJson6902:
 - target:

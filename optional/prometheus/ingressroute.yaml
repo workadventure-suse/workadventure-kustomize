@@ -1,0 +1,54 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`grafana.wa.suse.net`)
+    kind: Rule
+    services:
+    - name: grafana
+      port: 3000
+  tls:
+    certResolver: myresolver
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`prom.wa.suse.net`)
+    kind: Rule
+    middlewares:
+    - name: prom-mw1
+      namespace: monitoring
+    services:
+    - name: prometheus-k8s
+      port: 9090
+  tls:
+    certResolver: myresolver
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: prom-mw1
+  namespace: monitoring
+spec:
+  basicAuth:
+    secret: prom-mw1-secret
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: prom-mw1-secret
+  namespace: monitoring
+data:
+  users: CHANGEMEINTOBASICAUTH
