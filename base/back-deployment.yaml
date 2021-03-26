@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  creationTimestamp: null
+  labels:
+    app: back
+  name: back
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: back
+  serviceName: back
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: back
+    spec:
+      containers:
+        - args:
+            - yarn
+            - run
+            - runprod
+          env:
+            - name: ADMIN_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: ADMIN_API_TOKEN
+                  optional: true
+            - name: ADMIN_API_URL
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: ADMIN_API_URL
+                  optional: true
+            # - name: DEBUG
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: settings
+            #       key: DEBUG
+            #       optional: true
+            - name: JITSI_ISS
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: JITSI_ISS
+            - name: JITSI_URL
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: JITSI_URL
+            - name: SECRET_JITSI_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: SECRET_JITSI_KEY
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: SECRET_KEY
+            - name: TURN_STATIC_AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: TURN_STATIC_AUTH_SECRET
+                  optional: true
+          image: ghcr.io/workadventure-suse/workadventure-back:v0.0.1
+          name: back
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: api
+              containerPort: 50051
+          startupProbe:
+            httpGet:
+              path: /metrics
+              port: 8080
+            failureThreshold: 30
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            failureThreshold: 1
+            periodSeconds: 5
+      restartPolicy: Always

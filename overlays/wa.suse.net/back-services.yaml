@@ -1,0 +1,19 @@
+# one for each additional service, starting at zero
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: back-1
+  labels:
+    app: back
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    name: web1
+  - port: 50051
+    protocol: TCP
+    name: web2
+  selector:
+    app: back
+    statefulset.kubernetes.io/pod-name: back-1

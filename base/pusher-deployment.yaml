@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: pusher
+  name: pusher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pusher
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: pusher
+    spec:
+      containers:
+        - args:
+            - yarn
+            - run
+            - runprod
+          env:
+            - name: API_URL
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: BACK_URLS
+            - name: ADMIN_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: ADMIN_API_TOKEN
+                  optional: true
+# leave empty, not part of workadventure
+#            - name: ADMIN_API_URL
+#              valueFrom:
+#                secretKeyRef:
+#                  name: settings
+#                  key: ADMIN_API_URL
+#                  optional: true
+            - name: DEBUG
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: DEBUG
+                  optional: true
+            - name: JITSI_ISS
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: JITSI_ISS
+            - name: JITSI_URL
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: JITSI_URL
+            - name: SECRET_JITSI_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: SECRET_JITSI_KEY
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: SECRET_KEY
+          image: ghcr.io/workadventure-suse/workadventure-pusher:v0.0.1
+          name: pusher
+          ports:
+            - name: http
+              containerPort: 8080
+          startupProbe:
+            httpGet:
+              path: /metrics
+              port: 8080
+            failureThreshold: 30
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            failureThreshold: 1
+            periodSeconds: 5
+      restartPolicy: Always

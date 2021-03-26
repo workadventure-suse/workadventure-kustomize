@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: uploader
+  name: uploader
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uploader
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: uploader
+    spec:
+      containers:
+        - env:
+            - name: DEBUG
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: DEBUG
+                  optional: true
+          image: ghcr.io/workadventure-suse/workadventure-uploader:v0.0.1
+          name: uploader
+          ports:
+            - name: http
+              containerPort: 8080
+          startupProbe:
+            tcpSocket:
+              port: 8080
+            failureThreshold: 30
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            failureThreshold: 1
+            periodSeconds: 5
+      restartPolicy: Always

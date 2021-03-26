@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: back
+spec:
+  template:
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/master: "true"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pusher
+spec:
+  template:
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/master: "true"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front
+spec:
+  template:
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/master: "true"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uploader
+spec:
+  template:
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/master: "true"

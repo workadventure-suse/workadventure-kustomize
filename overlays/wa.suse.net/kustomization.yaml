@@ -1,0 +1,50 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+secretGenerator:
+- envs:
+  - .env
+  name: settings
+  type: Opaque
+
+resources:
+- back-services.yaml
+- ../../base
+
+patchesJson6902:
+- target:
+    group: traefik.containo.us
+    version: v1alpha1
+    kind: IngressRoute
+    name: front
+  patch: |-
+    [{ "op": "replace", "path": "/spec/routes/0/match", "value": "Host(`play.wa.suse.net`)" }]
+- target:
+    group: traefik.containo.us
+    version: v1alpha1
+    kind: IngressRoute
+    name: pusher
+  patch: |-
+    [{ "op": "replace", "path": "/spec/routes/0/match", "value": "Host(`pusher.wa.suse.net`)" }]
+- target:
+    group: traefik.containo.us
+    version: v1alpha1
+    kind: IngressRoute
+    name: uploader
+  patch: |-
+    [{ "op": "replace", "path": "/spec/routes/0/match", "value": "Host(`uploader.wa.suse.net`)" }]
+
+patches:
+# - target:
+#     group: traefik.containo.us
+#     version: v1alpha1
+#     kind: IngressRoute
+#   patch: |-
+#      [{ "op": "replace", "path": "/spec/tls/certResolver", "value": "myresolver" }]
+- path: replica-count-back.yaml
+- path: replica-count-pusher.yaml
+- path: replica-count-front.yaml
+
+patchesStrategicMerge:
+#- single-node.yaml
+- pod-anti-affinity.yaml

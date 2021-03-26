@@ -1,0 +1,47 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: front
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`play.cluster.local`)
+    kind: Rule
+    services:
+    - name: front
+      port: 80
+  tls:
+    certResolver: myresolver
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: pusher
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`pusher.cluster.local`)
+    kind: Rule
+    services:
+    - name: pusher
+      port: 8080
+  tls:
+    certResolver: myresolver
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: uploader
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`uploader.cluster.local`)
+    kind: Rule
+    services:
+    - name: uploader
+      port: 8080
+  tls:
+    certResolver: myresolver

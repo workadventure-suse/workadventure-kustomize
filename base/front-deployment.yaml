@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: front
+  name: front
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: front
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: front
+    spec:
+      containers:
+        - env:
+            - name: ADMIN_URL
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: ADMIN_URL
+                  optional: true
+            - name: API_URL
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: API_URL
+            - name: DEBUG_MODE
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: DEBUG_MODE
+                  optional: true
+            - name: JITSI_PRIVATE_MODE
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: JITSI_PRIVATE_MODE
+            - name: JITSI_URL
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: JITSI_URL
+            - name: START_ROOM_URL
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: START_ROOM_URL
+            - name: STUN_SERVER
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: STUN_SERVER
+                  optional: true
+            - name: TURN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: TURN_PASSWORD
+                  optional: true
+            - name: TURN_SERVER
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: TURN_SERVER
+                  optional: true
+            - name: TURN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: TURN_USER
+                  optional: true
+            - name: UPLOADER_URL
+              valueFrom:
+                secretKeyRef:
+                  name: settings
+                  key: UPLOADER_URL
+          image: ghcr.io/workadventure-suse/workadventure-front:v0.0.1
+          name: front
+          ports:
+            - name: http
+              containerPort: 80
+          startupProbe:
+            httpGet:
+              path: /
+              port: 80
+            failureThreshold: 30
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            failureThreshold: 1
+            periodSeconds: 5
+      restartPolicy: Always
