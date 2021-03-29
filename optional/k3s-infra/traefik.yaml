@@ -1,0 +1,22 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  chart: traefik
+  repo: https://helm.traefik.io/traefik
+  valuesContent: |
+    globalArguments: []
+    additionalArguments:
+      - "--log.level=DEBUG"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge"
+      #- "--certificatesresolvers.myresolver.acme.email=EDITYOUREMAILHERE"
+      - "--certificatesresolvers.myresolver.acme.storage=/data/acme.json"
+      #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+    persistence:
+      enabled: true
+      name: data
+      existingClaim: "local-path-data"
+      path: /data

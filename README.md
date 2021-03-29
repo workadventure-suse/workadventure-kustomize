@@ -3,7 +3,7 @@
 ## Deploy
 
 
-1. First deploy traefik with a tls challenge resolver.
+1. First deploy traefik with a tls challenge resolver. If you are using k3s, you should disable the default traefik, and install traefik with k3s-infra manifests.
 
 2. Copy/edit the overlay directory.
 
